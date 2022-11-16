@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { CookieService } from 'ngx-cookie';
+import { Router } from '@angular/router';
 
 import { NewUserModel, UpdateUserModel, UserModel } from '../models/user.model';
 
@@ -10,11 +12,26 @@ import { NewUserModel, UpdateUserModel, UserModel } from '../models/user.model';
 export class UserService {
   private apiUrl = 'http://localhost:3000';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private cookieService: CookieService,
+    private router: Router
+  ) {}
+
+  loginUser(credentials: { username: string; password: string }) {
+    console.log(credentials);
+    return this.http.post(`${this.apiUrl}/users/login`, credentials);
+  }
 
   getUsers(): Observable<UserModel[]> {
-    // console.log('getUsers called!!');
-    return this.http.get<UserModel[]>(`${this.apiUrl}/users`);
+    const cookieUserId = this.cookieService.get('id');
+    if (!cookieUserId) {
+      alert('Login Required');
+      this.router.navigateByUrl('');
+    }
+    return this.http.get<UserModel[]>(`${this.apiUrl}/users`, {
+      headers: { Authorization: `Bearer ${cookieUserId}` },
+    });
   }
 
   postUser(user: NewUserModel) {
@@ -22,10 +39,24 @@ export class UserService {
   }
 
   updateUsers(id: string, user: UpdateUserModel) {
-    return this.http.patch(`${this.apiUrl}/users/${id}`, user);
+    const cookieUserId = this.cookieService.get('id');
+    if (!cookieUserId) {
+      alert('Login Required');
+      this.router.navigateByUrl('');
+    }
+    return this.http.patch(`${this.apiUrl}/users/${id}`, user, {
+      headers: { Authorization: `Bearer ${cookieUserId}` },
+    });
   }
 
   deleteUser(id: string) {
-    return this.http.delete(`${this.apiUrl}/users/${id}`);
+    const cookieUserId = this.cookieService.get('id');
+    if (!cookieUserId) {
+      alert('Login Required');
+      this.router.navigateByUrl('');
+    }
+    return this.http.delete(`${this.apiUrl}/users/${id}`, {
+      headers: { Authorization: `Bearer ${cookieUserId}` },
+    });
   }
 }

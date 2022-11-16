@@ -27,7 +27,7 @@ export class CustomerComponent implements OnInit {
   ngOnInit(): void {
     this.customerService.getCustomers().subscribe((customersData) => {
       this.customersData = customersData;
-      console.log(this.customersData);
+      // console.log(this.customersData);
     });
   }
 
@@ -97,11 +97,10 @@ export class CustomerComponent implements OnInit {
   onShowUsers(customer: CustomerModel) {
     this.relatedUsers = customer.users as UserModel[];
     this.customerId = customer.id!;
-    console.log(customer.users);
+    // console.log(customer.users);
     this.showRelatedUsers = true;
   }
   onHideUsers() {
-    console.log('onHideUsers called');
     this.showRelatedUsers = false;
   }
   onAddCustomer() {

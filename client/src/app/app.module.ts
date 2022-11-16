@@ -11,6 +11,9 @@ import { CustomerComponent } from './components/customer/customer.component';
 import { AddCustomerComponent } from './components/customer/add-customer/add-customer.component';
 import { RelatedUsersComponent } from './components/customer/related-users/related-users.component';
 import { AppRoutingModule } from './app-routing.module';
+import { RegisterComponent } from './components/register/register.component';
+import { LoginComponent } from './components/login/login.component';
+import { CookieModule } from 'ngx-cookie';
 
 @NgModule({
   declarations: [
@@ -21,12 +24,15 @@ import { AppRoutingModule } from './app-routing.module';
     CustomerComponent,
     AddCustomerComponent,
     RelatedUsersComponent,
+    RegisterComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     ReactiveFormsModule,
     AppRoutingModule,
+    CookieModule.withOptions(),
   ],
   providers: [],
   bootstrap: [AppComponent],

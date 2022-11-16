@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { CustomerModel } from 'src/app/models/customer.model';
 import { RoleModel } from 'src/app/models/role.model';
 import { CustomerService } from 'src/app/services/customer.service';
@@ -7,24 +8,21 @@ import { RoleService } from 'src/app/services/role.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
-  selector: 'app-add-user',
-  templateUrl: './add-user.component.html',
-  styleUrls: ['./add-user.component.css'],
+  selector: 'app-register',
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.css'],
 })
-export class AddUserComponent implements OnInit {
+export class RegisterComponent implements OnInit {
   addUserForm!: FormGroup;
-  showAddForm: boolean = false;
   submitButtonClicked: boolean = false;
-  showAddButton: boolean = true;
   roles: RoleModel[] = [];
   customers: CustomerModel[] = [];
 
-  @Output() onSubmitUser = new EventEmitter();
-
   constructor(
-    private userService: UserService,
     private roleService: RoleService,
-    private customerService: CustomerService
+    private customerService: CustomerService,
+    private userService: UserService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -61,6 +59,7 @@ export class AddUserComponent implements OnInit {
       customerId: new FormControl(null, Validators.required),
     });
   }
+
   onSubmit() {
     if (this.addUserForm.status === 'INVALID') {
       this.submitButtonClicked = true;
@@ -75,13 +74,16 @@ export class AddUserComponent implements OnInit {
       console.log(newUser);
 
       this.submitButtonClicked = false;
-      this.showAddForm = false;
-      this.showAddButton = true;
 
-      this.userService.postUser(newUser).subscribe((_) => {
-        this.addUserForm.reset();
-        this.onSubmitUser.emit();
-      });
+      this.userService.postUser(newUser).subscribe(
+        (_) => {
+          alert(`\nNew User created Successfully ! Log in to see Changes !`);
+          this.router.navigateByUrl('');
+        },
+        (err) => {
+          alert('Some error occurred,try again with different details');
+        }
+      );
     }
   }
 }
